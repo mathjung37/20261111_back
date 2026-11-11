@@ -29,7 +29,9 @@ uvicorn app.main:app --reload --port 8000
 - `OPENAI_MODEL`: 사용할 모델. 기본값은 `gpt-5.6-sol`
 - `OPENAI_REASONING_EFFORT`: 추론 강도. 기본값은 `medium`
 - `OPENAI_SKILL_ID`: 사용할 업로드 Skill ID
-- `FIRESTORE_PROJECT_ID`: Firebase 프로젝트 ID
+- `FIREBASE_PROJECT_ID`: Firebase 프로젝트 설정에 표시되는 프로젝트 ID
+- `FIRESTORE_DATABASE_ID`: Firestore 데이터베이스 ID. 기본값은 `(default)`
+- `FIRESTORE_COLLECTION`: 업무 세션을 저장할 컬렉션. 기본값은 `work_sessions`
 - `GOOGLE_APPLICATION_CREDENTIALS`: 로컬 서비스 계정 JSON 경로. Google Cloud에서는 Application Default Credentials를 권장합니다.
 - `ALLOWED_ORIGINS`: 쉼표로 구분한 Netlify 및 로컬 프론트엔드 주소
 
@@ -52,4 +54,6 @@ pytest
 ## Google Cloud 배포
 
 `Dockerfile`은 Cloud Run에서 바로 사용할 수 있도록 `PORT` 환경 변수를 사용합니다. 프로덕션 환경에서는 Secret Manager로 `OPENAI_API_KEY`를 주입하고, Cloud Run 서비스 계정에 Firestore 접근 권한을 부여합니다.
+
+Cloud Run에서는 `FIREBASE_PROJECT_ID`에 Firebase 프로젝트 ID를 설정합니다. Firebase Admin SDK는 Cloud Run 서비스 계정의 Application Default Credentials를 사용하며, `FIRESTORE_DATABASE_ID`로 지정한 데이터베이스에 연결합니다.
 

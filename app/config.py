@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import SecretStr
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +11,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,
+        populate_by_name=True,
     )
 
     app_env: str = "development"
@@ -27,7 +28,11 @@ class Settings(BaseSettings):
     openai_request_timeout_seconds: float = 120.0
 
     storage_backend: Literal["firestore", "memory"] = "firestore"
-    firestore_project_id: str | None = None
+    firebase_project_id: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("FIREBASE_PROJECT_ID", "FIRESTORE_PROJECT_ID"),
+    )
+    firestore_database_id: str = "(default)"
     firestore_collection: str = "work_sessions"
 
     @property

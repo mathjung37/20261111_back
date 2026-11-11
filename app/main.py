@@ -117,7 +117,8 @@ def _get_service(application: FastAPI) -> WorkPlanningService:
         InMemoryWorkSessionRepository()
         if settings.storage_backend == "memory"
         else FirestoreWorkSessionRepository(
-            settings.firestore_project_id,
+            settings.firebase_project_id,
+            settings.firestore_database_id,
             settings.firestore_collection,
         )
     )

@@ -83,17 +83,23 @@ class InMemoryWorkSessionRepository:
 
 
 class FirestoreWorkSessionRepository:
-    def __init__(self, project_id: str | None, collection: str) -> None:
+    def __init__(
+        self,
+        firebase_project_id: str | None,
+        database_id: str,
+        collection: str,
+    ) -> None:
         import firebase_admin
         from firebase_admin import firestore
 
         try:
-            firebase_admin.get_app()
+            app = firebase_admin.get_app()
         except ValueError:
-            firebase_admin.initialize_app(options={"projectId": project_id} if project_id else None)
+            options = {"projectId": firebase_project_id} if firebase_project_id else None
+            app = firebase_admin.initialize_app(options=options)
 
         self._firestore = firestore
-        self._client = firestore.client()
+        self._client = firestore.client(app=app, database_id=database_id)
         self._collection = self._client.collection(collection)
 
     async def create(self, session_id: str, data: dict[str, Any]) -> None:
