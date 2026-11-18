@@ -125,13 +125,7 @@ class OpenAIAgentClient:
     ) -> AgentTurnResult:
         plan_text = self._as_bullets([item.title for item in current_plan])
         prompt = f"사용자 메시지:\n{message}\n\n현재 내일 할 일 초안:\n{plan_text}"
-        events = [
-            {
-                "type": "agent.session.input.message",
-                "role": "user",
-                "content": [{"type": "input_text", "text": prompt}],
-            }
-        ]
+        events = self._message_events(prompt)
 
         client = self._client or self._new_client()
         close_client = self._client is None
@@ -240,6 +234,20 @@ class OpenAIAgentClient:
             for title in titles
         ]
         return AgentTurnResult(session_id=session_id, assistant_message=message, plan=plan)
+
+    @staticmethod
+    def _message_events(prompt: str) -> list[dict[str, Any]]:
+        return [
+            {
+                "type": "agent.session.input.message",
+                "input": [
+                    {
+                        "role": "user",
+                        "content": [{"type": "input_text", "text": prompt}],
+                    }
+                ],
+            }
+        ]
 
     @staticmethod
     def _as_bullets(items: list[str]) -> str:

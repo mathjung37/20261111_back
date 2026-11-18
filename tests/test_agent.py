@@ -45,3 +45,19 @@ def test_session_payload_references_configured_skill():
     assert payload["environment"]["skills"] == [
         {"type": "skill_reference", "skill_id": "skill_test", "version": "latest"}
     ]
+
+
+def test_follow_up_message_uses_agents_api_input_shape():
+    events = OpenAIAgentClient._message_events("오후에 진행할게요.")
+
+    assert events == [
+        {
+            "type": "agent.session.input.message",
+            "input": [
+                {
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": "오후에 진행할게요."}],
+                }
+            ],
+        }
+    ]
